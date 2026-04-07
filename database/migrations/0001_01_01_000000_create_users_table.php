@@ -11,6 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('address');
+            $table->enum('gender', ['Male', 'Female']); // Crucial for the activity!
+            $table->date('dob'); 
+            $table->timestamps();
+        });
+
+
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');

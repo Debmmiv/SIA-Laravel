@@ -12,7 +12,11 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return view('customer.index');
+        // Fetch all customers from the database
+        $customers = \App\Models\Customer::all(); 
+        
+        // Pass the $customers variable to the view
+        return view('customers.index', compact('customers'));
         //
     }
 
@@ -21,7 +25,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+       return view('customers.create');
     }
 
     /**
@@ -29,7 +33,16 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $request->validate([
+        'name' => 'required',
+        'address' => 'required',
+        'gender' => 'required',
+        'dob' => 'required|date',
+    ]);
+
+    \App\Models\Customer::create($request->all());
+
+    return redirect()->route('customers.index')->with('success', 'Customer added!');
     }
 
     /**
@@ -45,7 +58,7 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
-        //
+        return view('customers.edit', compact('customer'));
     }
 
     /**
@@ -53,7 +66,9 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
-        //
+       $customer->update($request->all());
+
+    return redirect()->route('customers.index')->with('success', 'Customer updated successfully!');
     }
 
     /**
@@ -61,6 +76,9 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        //
+        $customer->delete();
+
+    // 2. THIS IS THE MISSING PART: Tell the browser to go back to the list
+    return redirect()->route('customers.index')->with('success', 'Customer deleted successfully!');
     }
 }
