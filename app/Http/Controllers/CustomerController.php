@@ -4,20 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all customers from the database
-        $customers = \App\Models\Customer::all(); 
-        
-        // Pass the $customers variable to the view
-        return view('customers.index', compact('customers'));
-        //
+        $search = $request->input('search');
+
+        $customers = Customer::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%")
+                      ->orWhere('gender', 'like', "%{$search}%");
+            })
+            ->paginate(5)
+            ->appends(['search' => $search]);
+
+        return view('customers.index', compact('customers', 'search'));
     }
 
     /**
@@ -80,5 +87,25 @@ class CustomerController extends Controller
 
     // 2. THIS IS THE MISSING PART: Tell the browser to go back to the list
     return redirect()->route('customers.index')->with('success', 'Customer deleted successfully!');
+    }
+
+    /**
+     * Export customer records to PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $search = $request->input('search');
+
+        $customers = Customer::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%")
+                      ->orWhere('gender', 'like', "%{$search}%");
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('customers.pdf', compact('customers', 'search'));
+
+        return $pdf->download('customers-report.pdf');
     }
 }
