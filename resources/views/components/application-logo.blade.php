@@ -1,1 +1,1 @@
-<img src="{{ asset('images/Application-logo.png') }}" alt="System Logo" {{ $attributes }}>
+<img src="{{ asset('images/Welcome-logo.jpg') }}" alt="System Logo" style="max-height:48px;max-width:48px;width:auto;object-fit:contain;border-radius:50%;" {{ $attributes }}>

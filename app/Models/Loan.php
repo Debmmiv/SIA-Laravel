@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class Loan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'address', 'gender', 'dob'];
+    protected $fillable = ['description', 'amount', 'term', 'interest', 'dategranted'];
 
     public function loanTransactions()
     {
